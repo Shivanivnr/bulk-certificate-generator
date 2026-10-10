@@ -1,0 +1,15 @@
+
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+
+certificates.db
+certificates.db-shm
+certificates.db-wal
+
+generated_certificates/
+test_generated/
+*.zip
