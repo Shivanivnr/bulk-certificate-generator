@@ -47,7 +47,7 @@ The `certificates.db` file is created locally when the application initializes i
 ### 1. Clone the repository
 
 ```bash
-git clone YOUR_GITHUB_REPOSITORY_URL
+git clone https://github.com/Shivanivnr/bulk-certificate-generator
 cd bulk-certificate-generator
 ```
 
