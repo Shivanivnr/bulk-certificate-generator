@@ -1,0 +1,257 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Generate, manage and download certificates in bulk.">
+    <title>Certify — Bulk Certificate Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <a href="#" class="brand">
+                <span class="brand-icon">C</span>
+                <span>Certify<span class="brand-dot">.</span></span>
+            </a>
+
+            <p class="nav-label">WORKSPACE</p>
+            <nav>
+                <a href="#dashboard" class="nav-item active" data-page="dashboard">
+                    <span>▦</span> Dashboard
+                </a>
+                <a href="#create" class="nav-item" data-page="create">
+                    <span>＋</span> Create certificates
+                </a>
+                
+                <a href="#studio" class="nav-item" data-page="studio">
+                    <span class="nav-icon">✎</span>
+                    <span>Template Studio</span>
+                </a>
+
+                <a href="#jobs" class="nav-item" data-page="jobs">
+                    <span>◷</span> Generation history
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="sidebar-note">
+                    <span class="note-icon">✦</span>
+                    <strong>Made for efficiency</strong>
+                    <p>Generate certificates for an entire event in one go.</p>
+                </div>
+                <div class="profile">
+                    <div class="avatar">CG</div>
+                    <div>
+                        <strong>Certificate Admin</strong>
+                        <small>Workspace</small>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <span class="breadcrumb">Workspace / <strong id="breadcrumb-page">Dashboard</strong></span>
+                </div>
+                <div class="topbar-right">
+                    <span class="status-dot"></span>
+                    <span id="connection-status">Connecting to API...</span>
+                </div>
+            </header>
+
+            <section class="page" id="dashboard-page">
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">OVERVIEW</p>
+                        <h1>Good to see you <span class="wave">✦</span></h1>
+                        <p class="subtitle">Create, track, and manage your certificates in one place.</p>
+                    </div>
+                    <button class="button button-primary" data-go="create">＋ Create certificates</button>
+                </div>
+
+                <div class="stats-grid">
+                    <article class="stat-card">
+                        <div class="stat-top"><span>Total jobs</span><span class="stat-icon purple">▦</span></div>
+                        <h2 id="total-jobs">—</h2>
+                        <p>Generation batches</p>
+                    </article>
+                    <article class="stat-card">
+                        <div class="stat-top"><span>Recipients processed</span><span class="stat-icon blue">♙</span></div>
+                        <h2 id="total-recipients">—</h2>
+                        <p>Across loaded jobs</p>
+                    </article>
+                    <article class="stat-card">
+                        <div class="stat-top"><span>Successful</span><span class="stat-icon green">✓</span></div>
+                        <h2 id="successful-count">—</h2>
+                        <p>Certificates generated</p>
+                    </article>
+                    <article class="stat-card">
+                        <div class="stat-top"><span>Failed</span><span class="stat-icon orange">!</span></div>
+                        <h2 id="failed-count">—</h2>
+                        <p>Certificates needing attention</p>
+                    </article>
+                </div>
+
+                <section class="panel">
+                    <div class="panel-heading">
+                        <div>
+                            <h2>Recent generation jobs</h2>
+                            <p>Your latest certificate batches</p>
+                        </div>
+                        <button class="button button-secondary" data-go="jobs">View history →</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>JOB ID</th><th>EVENT</th><th>RECIPIENTS</th><th>STATUS</th><th>ACTION</th></tr>
+                            </thead>
+                            <tbody id="recent-jobs">
+                                <tr><td colspan="5" class="empty-state">Loading jobs…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <div class="info-banner">
+                    <span>✦</span>
+                    <div><strong>Simple, reliable certificate generation</strong><p>Each recipient is processed individually, so one failure doesn't stop the remaining certificates.</p></div>
+                </div>
+            </section>
+
+            <section class="page hidden" id="create-page">
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">NEW BATCH</p>
+                        <h1>Create certificates</h1>
+                        <p class="subtitle">Enter your event details and add every recipient.</p>
+                    </div>
+                </div>
+
+                <div class="panel form-panel">
+                    <div class="section-title"><span class="step-number">1</span><div><h2>Event details</h2><p>Information printed on the certificates</p></div></div>
+                    <label for="event-name">Event or program name <span class="required">*</span></label>
+                    <input id="event-name" type="text" maxlength="200" placeholder="e.g. Data Science Workshop 2026">
+                    
+                    <div class="section-title recipient-title"><span class="step-number">2</span><div><h2>Recipients</h2><p>Add the people who will receive certificates</p></div></div>
+                    <div class="recipient-toolbar"><span id="recipient-count">1 recipient</span><button type="button" id="add-recipient" class="text-button">＋ Add recipient</button></div>
+                    
+                    <div class="table-wrap">
+                        <table class="recipient-table">
+                            <thead><tr><th>#</th><th>FULL NAME</th><th>EMAIL ADDRESS</th><th></th></tr></thead>
+                            <tbody id="recipient-rows"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="form-footer">
+                        <p>Review recipient names and email addresses before generating.</p>
+                        <button id="generate-button" class="button button-primary">Generate certificates →</button>
+                    </div>
+                    <div id="create-message" class="message hidden" role="status"></div>
+                </div>
+            </section>
+            <section id="studio-page" class="page hidden">
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">DESIGN WORKSPACE</p>
+                        <h1>Template Studio</h1>
+                        <p>Upload your certificate design and customize it for every recipient.</p>
+                    </div>
+                </div>
+
+                <div class="studio-layout">
+                    <div class="panel studio-upload-panel">
+                        <h2>1. Upload certificate design</h2>
+                        <p>Choose a PNG or JPG image of your certificate.</p>
+
+                        <label for="template-image" class="upload-area">
+                            <span class="upload-icon">＋</span>
+                            <strong>Choose certificate image</strong>
+                            <span>PNG or JPG, preferably landscape</span>
+                        </label>
+
+                        <input
+                            id="template-image"
+                            type="file"
+                            accept="image/png,image/jpeg"
+                            hidden
+                        />
+
+                        <p id="template-file-name" class="helper-text">
+                            No template selected yet.
+                        </p>
+                    </div>
+                    
+                    <div id="template-preview" class="template-preview">
+                        <div id="template-empty-state">
+                            <span>🖼️</span>
+                            <p>Upload an image to begin designing.</p>
+                        </div>
+
+                        <canvas id="certificate-canvas" hidden></canvas>
+                    </div>
+
+                    <div class="editor-controls">
+                        <h3>Text settings</h3>
+
+                        <label for="text-content">Text</label>
+                        <input id="text-content" type="text" value="Recipient Name"
+                            placeholder="Enter certificate text">
+
+                        <label for="font-family">Font family</label>
+                        <select id="font-family">
+                            <option value="Arial">Arial</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Verdana">Verdana</option>
+                        </select>
+
+                        <label for="font-size">Font size</label>
+                        <input id="font-size" type="range" min="12" max="60" value="32">
+                        <span id="font-size-value">32 px</span>
+
+                        <label for="font-color">Text color</label>
+                        <input id="font-color" type="color" value="#172554">
+
+                        <div class="editor-buttons">
+                            <button type="button" id="add-text-button">Add text</button>
+                            <button type="button" id="delete-text-button">Delete selected text</button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+            <section class="page hidden" id="jobs-page">
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">ACTIVITY</p>
+                        <h1>Generation history</h1>
+                        <p class="subtitle">Review your generation batches and download completed certificates.</p>
+                    </div>
+                    <button class="button button-primary" data-go="create">＋ New batch</button>
+                </div>
+                <section class="panel">
+                    <div class="panel-heading"><div><h2>All jobs</h2><p>Job status and certificate downloads</p></div><button id="refresh-jobs" class="button button-secondary">↻ Refresh</button></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>JOB ID</th><th>EVENT</th><th>TOTAL</th><th>SUCCESS</th><th>FAILED</th><th>STATUS</th><th>DOWNLOAD</th></tr></thead>
+                            <tbody id="all-jobs"><tr><td colspan="7" class="empty-state">Loading jobs…</td></tr></tbody>
+                        </table>
+                    </div>
+                </section>
+                <div id="jobs-message" class="message hidden" role="status"></div>
+            </section>
+
+            <footer class="footer">
+                <span>Certify <span class="brand-dot">.</span></span>
+                <span>Bulk Certificate Generator · Powered by FastAPI</span>
+            </footer>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

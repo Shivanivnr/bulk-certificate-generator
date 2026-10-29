@@ -15,6 +15,7 @@ from fastapi.responses import StreamingResponse
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 
 CERTIFICATE_OUTPUT_DIR = (
@@ -22,6 +23,18 @@ CERTIFICATE_OUTPUT_DIR = (
 )
 
 app = FastAPI(title="Bulk Certificate Generator")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://127.0.0.1:5500",
+        "http://localhost:5500",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 init_db()
 
 
@@ -375,6 +388,40 @@ def create_job(request: CertificateRequest):
     finally:
         connection.close()
 
+
+@app.get("/api/jobs/")
+def list_jobs():
+    connection = get_connection()
+    try:
+        rows = connection.execute(
+            """
+            SELECT
+                id,
+                event_name,
+                status,
+                total_recipients,
+                successful_count,
+                failed_count,
+                created_at
+            FROM jobs
+            ORDER BY id DESC
+            """
+        ).fetchall()
+
+        return [
+            {
+                "job_id": row["id"],
+                "event_name": row["event_name"],
+                "status": row["status"],
+                "total_recipients": row["total_recipients"],
+                "successful_count": row["successful_count"],
+                "failed_count": row["failed_count"],
+                "created_at": row["created_at"],
+            }
+            for row in rows
+        ]
+    finally:
+        connection.close()
 
 @app.get("/api/jobs/{job_id}/")
 def get_job_status(job_id: int):
